@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using SwiftSuds.Application.UseCases.Customers.CreateCustomer;
 
 namespace SwiftSuds.Application;
 

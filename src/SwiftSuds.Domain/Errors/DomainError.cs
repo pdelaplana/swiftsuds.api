@@ -2,8 +2,8 @@
 
 public enum ErrorCode
 {
-    CustomerNotFound = 100,
-    ValidationError = 200,
-
+    ValidationError = 100,
+    CustomerNotFound = 210,
+    UserNotFound = 220
 }
 public record DomainError(ErrorCode Code, string Description);

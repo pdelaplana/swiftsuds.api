@@ -6,21 +6,21 @@ namespace SwiftSuds.Order.Api.Modules.Customers.V1;
 
 public class CustomersModule : ICarterModule
 {
-    private const string BaseUrl = "api/v1/customers";
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet($"{BaseUrl}", EndpointHandlerFactory.CreateHandler<GetCustomers>())
-            .WithName("GetCustomers")
-            .WithOpenApi();
+        var group = app.MapGroup("api/v1/customers");
 
-        app.MapGet($"{BaseUrl}/{{id}}", EndpointHandlerFactory.CreateHandler<GetCustomerById>())
-            .WithName("GetCustomersById")
-            .WithOpenApi();
+        group.MapGet("/", EndpointHandlerFactory.CreateHandler<GetCustomers>())
+            .WithName("GetCustomers");
 
+        group.MapGet("/{id}", EndpointHandlerFactory.CreateHandler<GetCustomerById>())
+            .WithName("GetCustomersById");
 
-        app.MapPost($"{BaseUrl}", EndpointHandlerFactory.CreateHandler<CreateCustomer>())
-            .WithName("CreateCustomer")
-            .WithOpenApi();
+        group.MapPost("/", EndpointHandlerFactory.CreateHandler<CreateCustomer>())
+            .WithName("CreateCustomer");
+
+        group.WithTags("Customers (v1)").WithOpenApi();
+
     }
 }
