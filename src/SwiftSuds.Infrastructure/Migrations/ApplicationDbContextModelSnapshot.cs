@@ -8,7 +8,7 @@ using SwiftSuds.Infrastructure.Persistence.EFCore.Contexts;
 
 #nullable disable
 
-namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
+namespace SwiftSuds.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -191,6 +191,23 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                     b.HasIndex("PickupDriverId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("SwiftSuds.Domain.Entities.UserAccounts.UserAccount", b =>
+                {
+                    b.Property<Guid>("UserAccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccountType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(60)");
+
+                    b.HasKey("UserAccountId");
+
+                    b.ToTable("UserAccounts");
                 });
 
             modelBuilder.Entity("SwiftSuds.Domain.Entities.BusinessEmployees.BusinessEmployee", b =>

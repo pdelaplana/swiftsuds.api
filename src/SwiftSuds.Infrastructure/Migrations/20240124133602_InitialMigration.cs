@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
+namespace SwiftSuds.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration
@@ -69,6 +69,19 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Drivers", x => x.DriverId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAccounts",
+                columns: table => new
+                {
+                    UserAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(60)", nullable: false),
+                    AccountType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAccounts", x => x.UserAccountId);
                 });
 
             migrationBuilder.CreateTable(
@@ -214,6 +227,9 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "UserAccounts");
 
             migrationBuilder.DropTable(
                 name: "BusinessServices");
