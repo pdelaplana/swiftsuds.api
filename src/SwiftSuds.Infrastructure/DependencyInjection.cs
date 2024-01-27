@@ -24,6 +24,11 @@ public static class DependencyInjection
             options
                 .UseSqlServer(configuration.GetConnectionString("ReadOnly"))
         );
+        services.AddDbContext<MigrationDbContext>(options =>
+            options
+                .UseSqlServer(configuration.GetConnectionString("Migration"))
+        );
+
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 

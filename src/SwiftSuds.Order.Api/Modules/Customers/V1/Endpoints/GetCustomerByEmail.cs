@@ -1,4 +1,5 @@
 ﻿
+using Azure.Core;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using SwiftSuds.Application.UseCases.Customers.GetCustomerByEmail;
@@ -8,10 +9,16 @@ using SwiftSuds.Order.Api.Modules.Customers.V1.Models;
 
 namespace SwiftSuds.Order.Api.Modules.Customers.V1.Endpoints;
 
-public class GetCustomerByEmail : ApiEndpoint<GetCustomerByEmailRequest, Results<Ok<GetCustomerByEmailResponse>, ValidationProblem>>
+public class GetCustomerByEmail(ILogger<GetCustomerByEmail> logger) : ApiEndpoint<GetCustomerByEmailRequest, Results<Ok<GetCustomerByEmailResponse>, ValidationProblem>>
 {
-    public override async Task<Results<Ok<GetCustomerByEmailResponse>, ValidationProblem>> AsyncHandler(GetCustomerByEmailRequest request, IMediator mediator)
+    public override async Task<Results<Ok<GetCustomerByEmailResponse>, ValidationProblem>> AsyncHandler(
+        GetCustomerByEmailRequest request, 
+        IMediator mediator, ILogger<GetCustomerByEmailRequest> logger)
     {
+        logger.LogInformation("Invoking endpoint '{endpoint}' with '{req}'", 
+            nameof(GetCustomerByEmail), 
+            request);
+        
         var query = new GetCustomerByEmailQuery()
         {
             Email = request.Email
@@ -33,6 +40,7 @@ public class GetCustomerByEmail : ApiEndpoint<GetCustomerByEmailRequest, Results
             error => TypedResults.ValidationProblem((error as ValidationError)?.ValidationErrors)
         );
     }
+
 
     public override Delegate AsyncHandlerDelegate()
     {

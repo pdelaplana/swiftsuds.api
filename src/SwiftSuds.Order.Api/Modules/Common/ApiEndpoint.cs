@@ -8,7 +8,7 @@ public abstract class BaseApiEndpoint
 }
 public abstract class ApiEndpoint<TRequest, TResponse>: BaseApiEndpoint
 {
-    public abstract Task<TResponse> AsyncHandler(TRequest request, IMediator mediator);
+    public abstract Task<TResponse> AsyncHandler(TRequest request, IMediator mediator, ILogger<TRequest> logger);
 }
 
 public static class EndpointHandlerFactory

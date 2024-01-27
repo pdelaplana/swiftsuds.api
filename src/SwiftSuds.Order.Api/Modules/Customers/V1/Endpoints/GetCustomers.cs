@@ -9,8 +9,11 @@ namespace SwiftSuds.Order.Api.Modules.Customers.V1.Endpoints;
 public class GetCustomers : ApiEndpoint<GetCustomersRequest, Results<Ok<GetCustomersResponse>, ProblemHttpResult>>
 {
     public override async Task<Results<Ok<GetCustomersResponse>, ProblemHttpResult>> AsyncHandler(
-        GetCustomersRequest request, IMediator mediator)
+        GetCustomersRequest request, IMediator mediator, ILogger<GetCustomersRequest> logger)
     {
+        logger.LogInformation("Invoking endpoint '{endpoint}' with '{req}'", 
+            nameof(GetCustomers), 
+            request);
 
         var query = new GetCustomersQuery()
         {

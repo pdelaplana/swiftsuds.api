@@ -10,8 +10,14 @@ namespace SwiftSuds.Order.Api.Modules.Customers.V1.Endpoints;
 
 public class GetCustomerById : ApiEndpoint<GetCustomerByIdRequest, Results<Ok<GetCustomerByIdResponse>, ValidationProblem>>
 {
-    public override async Task<Results<Ok<GetCustomerByIdResponse>, ValidationProblem>> AsyncHandler(GetCustomerByIdRequest request, IMediator mediator)
+    public override async Task<Results<Ok<GetCustomerByIdResponse>, ValidationProblem>> AsyncHandler(
+        GetCustomerByIdRequest request, IMediator mediator, ILogger<GetCustomerByIdRequest> logger)
     {
+        logger.LogInformation("Invoking endpoint '{endpoint}' with '{req}'",
+            nameof(GetCustomerById),
+            request);
+
+
         var query = new GetCustomerByIdQuery()
         {
             Id = new Guid(request.Id)

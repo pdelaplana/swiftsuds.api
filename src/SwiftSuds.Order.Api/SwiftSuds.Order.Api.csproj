@@ -22,12 +22,22 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="NLog" Version="5.2.8" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SwiftSuds.Application\SwiftSuds.Application.csproj" />
     <ProjectReference Include="..\SwiftSuds.Infrastructure\SwiftSuds.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Repos\swiftsuds\backend\SwiftSuds\src\SwiftSuds.Order.Api\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Repos\swiftsuds\backend\SwiftSuds\src\SwiftSuds.Order.Api\.editorconfig" />
   </ItemGroup>
 
 </Project>

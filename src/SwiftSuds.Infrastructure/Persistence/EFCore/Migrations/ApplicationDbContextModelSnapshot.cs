@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SwiftSuds.Infrastructure.Persistence.EFCore.Contexts;
 
 #nullable disable
 
-namespace SwiftSuds.Infrastructure.Migrations
+namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240124133602_InitialMigration")]
-    partial class InitialMigration
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

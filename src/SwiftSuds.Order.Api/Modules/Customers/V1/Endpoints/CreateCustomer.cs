@@ -9,8 +9,12 @@ namespace SwiftSuds.Order.Api.Modules.Customers.V1.Endpoints;
 public class CreateCustomer: ApiEndpoint<CreateCustomerRequest, Results<Created<CreateCustomerResponse>, ValidationProblem>>
 {
     public override async Task<Results<Created<CreateCustomerResponse>,ValidationProblem>> AsyncHandler(
-        CreateCustomerRequest request, IMediator mediator)
+        CreateCustomerRequest request, IMediator mediator, ILogger<CreateCustomerRequest> logger)
     {
+        logger.LogInformation("Invoking endpoint '{endpoint}' with '{req}'", 
+            nameof(CreateCustomer), 
+            request);
+
         var command = new CreateCustomerCommand()
         {
             Name = request.Name,

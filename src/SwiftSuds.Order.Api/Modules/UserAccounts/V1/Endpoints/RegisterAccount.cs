@@ -9,8 +9,13 @@ namespace SwiftSuds.Order.Api.Modules.UserAccounts.V1.Endpoints;
 
 public class RegisterAccount : ApiEndpoint<RegisterAccountRequest, Results<Created<RegisterAccountResponse>, Conflict<string>, ValidationProblem>>
 {
-    public override async Task<Results<Created<RegisterAccountResponse>, Conflict<string>, ValidationProblem>> AsyncHandler(RegisterAccountRequest request, IMediator mediator)
+    public override async Task<Results<Created<RegisterAccountResponse>, Conflict<string>, ValidationProblem>> AsyncHandler(
+        RegisterAccountRequest request, IMediator mediator, ILogger<RegisterAccountRequest> logger)
     {
+        logger.LogInformation("Invoking endpoint '{endpoint}' with '{req}'",
+            nameof(RegisterAccount),
+            request);
+
         var query = new GetUserAccountByEmailQuery { Email = request.Email };
         var userAccount = await mediator.Send(query);
         if (userAccount.IsOk)

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SwiftSuds.Infrastructure.Migrations
+namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration
