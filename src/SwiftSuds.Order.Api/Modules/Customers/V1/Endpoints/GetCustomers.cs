@@ -17,7 +17,7 @@ public class GetCustomers : ApiEndpoint<GetCustomersRequest, Results<Ok<GetCusto
 
         var query = new GetCustomersQuery()
         {
-           Offset = request.Page,
+           Offset = (request.Page-1) * request.Size,
            Limit = request.Size
         };
         var result = await mediator.Send(query);
@@ -32,7 +32,7 @@ public class GetCustomers : ApiEndpoint<GetCustomersRequest, Results<Ok<GetCusto
                             c.Email,
                             c.Phone,
                             c.Address)).ToList(), 
-                    request.Page*request.Size, 
+                    request.Page, 
                     request.Size)),
             error => TypedResults.Problem(error.Description)
         );

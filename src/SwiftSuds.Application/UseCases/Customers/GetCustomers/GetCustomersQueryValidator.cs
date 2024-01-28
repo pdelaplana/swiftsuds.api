@@ -5,7 +5,7 @@ internal class GetCustomersQueryValidator : AbstractValidator<GetCustomersQuery>
 {
     public GetCustomersQueryValidator()
     {
-        RuleFor(model => model.Offset).GreaterThan(0);
-        RuleFor(model => model.Limit).GreaterThan(0);
+        RuleFor(query => query.Offset).GreaterThanOrEqualTo(0);
+        RuleFor(query=> query.Limit).GreaterThan(0);
     }
 }

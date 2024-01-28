@@ -9,17 +9,17 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Order.Api/Order.Api.csproj", "src/Order.Api/"]
-RUN dotnet restore "./src/Order.Api/./Order.Api.csproj"
+COPY ["src/SwiftSuds.Order.Api/SwiftSuds.Order.Api.csproj", "src/SwiftSuds.Order.Api/"]
+RUN dotnet restore "./src/SwiftSuds.Order.Api/./SwiftSuds.Order.Api.csproj"
 COPY . .
-WORKDIR "/src/src/Order.Api"
-RUN dotnet build "./Order.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/SwiftSuds.Order.Api"
+RUN dotnet build "./SwiftSuds.Order.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Order.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./SwiftSuds.Order.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Order.Api.dll"]
+ENTRYPOINT ["dotnet", "SwiftSuds.Order.Api.dll"]

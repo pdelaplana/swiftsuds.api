@@ -11,7 +11,7 @@ public record GetCustomersRequest(int Page = 0, int Size = 100)
 
         return ValueTask.FromResult<GetCustomersRequest?>(
             new GetCustomersRequest(
-                page == 0 ? 1 : page,
+                page <= 0 ? 1 : page,
                 pageSize == 0 ? 10 : pageSize
             )
         );
