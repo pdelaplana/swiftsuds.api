@@ -13,17 +13,50 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build image
+  displayName: Build the Application
+  variables: 
+  - name: DOCKER_BUILDKIT
+    value: 1
   jobs:
   - job: Build
     displayName: Build
     pool:
       vmImage: ubuntu-latest
     steps:
-    - task: Docker@2
-      displayName: Build an image
+    - task: DockerCompose@0
+      displayName: Build order.api image 
       inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/src/SwiftSuds.Order.Api/Dockerfile'
-        tags: |
-          $(tag)
+        containerregistrytype: 'Azure Container Registry'
+        dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.yml'
+        action: 'Build services'
+    - task: DockerCompose@0
+      displayName: Run application unit tests
+      inputs:
+        containerregistrytype: 'Azure Container Registry'
+        dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.yml'
+        action: 'Run a specific service'
+        serviceName: 'application.tests'
+        detached: false
+    - task: DockerCompose@0
+      displayName: Run api unit tests
+      inputs:
+        containerregistrytype: 'Azure Container Registry'
+        dockerComposeFile: '$(Build.SourcesDirectory)/docker-compose.yml'
+        action: 'Run a specific service'
+        serviceName: 'api.tests'
+        detached: false
+    - task: PublishTestResults@2
+      displayName: Publish test results
+      inputs:
+        testResultsFormat: 'VSTest'
+        #testResultsFiles: '**/*.trx'
+        testResultsFiles: '*.trx'
+        searchFolder: '$(System.DefaultWorkingDirectory)/testresults'
+        mergeTestResults: true
+        failTaskOnFailedTests: true
+    - task: PublishCodeCoverageResults@2
+      displayName: Publish code coverage    
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/testresults/coverage/*cobertura.xml'
+        failIfCoverageEmpty: true

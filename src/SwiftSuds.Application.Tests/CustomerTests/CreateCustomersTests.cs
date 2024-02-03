@@ -4,7 +4,6 @@ using Moq;
 using SwiftSuds.Application.Abstractions;
 using SwiftSuds.Application.Abstractions.Repositories;
 using SwiftSuds.Application.UseCases.Customers.CreateCustomer;
-using SwiftSuds.Domain.Entities.Customers;
 using SwiftSuds.Domain.Errors;
 using SwiftSuds.Domain.ValueObjects;
 
@@ -16,10 +15,23 @@ public class CreateCustomersTests
     private readonly Mock<IUnitOfWork> _mockUnitOfWork = new();
     private readonly Mock<IValidator<CreateCustomerCommand>> _mockValidator = new();
 
+    private void SetupValidation(bool validation)
+    {
+        var validationResults = new Mock<ValidationResult>();
+        validationResults.Setup(v => v.IsValid).Returns(validation);
+        _mockValidator.Setup(x =>
+            x.ValidateAsync(
+                It.IsAny<CreateCustomerCommand>(),
+                It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync(validationResults.Object);
+    }
+
     [Fact]
     public async Task CreateCustomerCommandHandler_Should_ReturnNewCustomer_WhenAllRequiredValuesAreProvided()
     {
         // arrange
+        SetupValidation(true);
         var command = new CreateCustomerCommand()
         {
             Name = "John Doe",
@@ -32,7 +44,6 @@ public class CreateCustomersTests
             _mockCustomerRepository.Object, _mockUnitOfWork.Object, _mockValidator.Object);
 
         // act
-        Customer _customer = null;
         var result = await handler.Handle(command, default);
 
         // assert
@@ -43,15 +54,7 @@ public class CreateCustomersTests
     public async Task CreateCustomerCommandHandler_Should_ReturnValidationError_WhenEmailIsMissing()
     {
         // arrange
-        var validationResults = new Mock<ValidationResult>();
-        validationResults.Setup(v => v.IsValid).Returns(false);
-        _mockValidator.Setup(x => 
-            x.ValidateAsync(
-                It.IsAny<CreateCustomerCommand>(), 
-                It.IsAny<CancellationToken>())
-            )
-            .ReturnsAsync(validationResults.Object);
-        
+        SetupValidation(false);        
         var command = new CreateCustomerCommand()
         {
             Name = "John Doe",

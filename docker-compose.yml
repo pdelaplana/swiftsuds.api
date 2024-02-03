@@ -1,11 +1,32 @@
-name: swiftsuds-containers
+version: '3.4'
+
 services:
   order.api:
-    image: ${DOCKER_REGISTRY-}orderapi
-    container_name: order-api
+    image: ${DOCKER_REGISTRY-}swiftsuds-api
+    container_name: swiftsuds-api
     build:
       context: .
       dockerfile: src/SwiftSuds.Order.Api/Dockerfile
+  application.tests:
+    image: ${DOCKER_REGISTRY-}swiftsuds-application-tests
+    container_name: swiftsuds-application-tests
+    build:
+      context: .
+      dockerfile: src/SwiftSuds.Order.Api/Dockerfile
+      target: test
+    entrypoint: dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=/testresults/coverage/app --results-directory /testresults --logger "trx;LogFileName=application_test_results.trx" ./src/SwiftSuds.Application.Tests/SwiftSuds.Application.Tests.csproj
+    volumes: 
+      - ./testresults:/testresults
+  api.tests:
+    image: ${DOCKER_REGISTRY-}swiftsuds-api-tests
+    container_name: swiftsuds-api-tests
+    build:
+      context: .
+      dockerfile: src/SwiftSuds.Order.Api/Dockerfile
+      target: test
+    entrypoint: dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=/testresults/coverage/api --results-directory /testresults --logger "trx;LogFileName=api_test_results.trx" ./src/SwiftSuds.Order.Api.Tests/SwiftSuds.Order.Api.Tests.csproj
+    volumes: 
+      - ./testresults:/testresults
   sql:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     container_name: sql-server-2022

@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Unit Test Results
+/src/SwiftSuds.Application.Tests/TestResults/
+/src/SwiftSuds.Order.Api.Tests/TestResults/
+

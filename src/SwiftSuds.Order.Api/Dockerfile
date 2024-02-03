@@ -5,15 +5,27 @@ USER app
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
+#ENV ASPNETCORE_HTTP_PORTS=8080
+#ENV ASPNETCORE_HTTPS_PORTS=8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/SwiftSuds.Order.Api/SwiftSuds.Order.Api.csproj", "src/SwiftSuds.Order.Api/"]
-RUN dotnet restore "./src/SwiftSuds.Order.Api/./SwiftSuds.Order.Api.csproj"
+RUN dotnet restore "./src/SwiftSuds.Order.Api/SwiftSuds.Order.Api.csproj"
 COPY . .
 WORKDIR "/src/src/SwiftSuds.Order.Api"
 RUN dotnet build "./SwiftSuds.Order.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+FROM build AS test
+WORKDIR /src
+COPY ["src/SwiftSuds.Application.Tests/SwiftSuds.Application.Tests.csproj", "src/SwiftSuds.Application.Tests/"]
+COPY ["src/SwiftSuds.Order.Api.Tests/SwiftSuds.Order.Api.Tests.csproj", "src/SwiftSuds.Order.Api.Tests/"]
+RUN dotnet restore "./src/SwiftSuds.Application.Tests/SwiftSuds.Application.Tests.csproj"
+RUN dotnet restore "./src/SwiftSuds.Order.Api.Tests/SwiftSuds.Order.Api.Tests.csproj"
+#RUN dotnet test -c Release --results-directory /testresults --logger "trx;LogFileName=application_test_results.trx" ./src/SwiftSuds.Application.Tests/SwiftSuds.Application.Tests.csproj
+#RUN dotnet test -c Release --results-directory /testresults --logger "trx;LogFileName=api_test_results.trx" ./src/SwiftSuds.Order.Api.Tests/SwiftSuds.Order.Api.Tests.csproj
+
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
