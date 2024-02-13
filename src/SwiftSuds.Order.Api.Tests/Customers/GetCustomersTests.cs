@@ -1,7 +1,7 @@
 ﻿using System.Net;
 
 
-namespace SwiftSuds.Order.Api.Tests;
+namespace SwiftSuds.Order.Api.Tests.Customers;
 
 public class GetCustomersTests()
 {
@@ -12,7 +12,7 @@ public class GetCustomersTests()
     {
         // arrange
         var application = new OrderApiTestApplication();
-        
+
         // act
         using var client = application.CreateClient();
 
@@ -20,6 +20,6 @@ public class GetCustomersTests()
 
         // assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        // assert
+
     }
 }

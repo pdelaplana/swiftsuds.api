@@ -5,6 +5,7 @@ using NLog;
 using NLog.Web;
 using SwiftSuds.Application;
 using SwiftSuds.Domain.Entities.Customers;
+using SwiftSuds.Domain.ValueObjects;
 using SwiftSuds.Infrastructure;
 using SwiftSuds.Order.Api.Helpers.Converters;
 
@@ -30,7 +31,7 @@ try
         });
     });
 
-    // NLog: Setup NLog for Dependency injection
+    // Setup NLog for Dependency injection
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
@@ -48,6 +49,9 @@ try
         options.SerializerOptions.IncludeFields = true;
         options.SerializerOptions.Converters.Add(
             new EntityIdConverter<CustomerId, Guid>());
+        options.SerializerOptions.Converters.Add(
+            new CurrencyConverter<Currency, string>());
+
     });
 
 

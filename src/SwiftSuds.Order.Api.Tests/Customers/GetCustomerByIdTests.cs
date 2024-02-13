@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 
-namespace SwiftSuds.Order.Api.Tests;
+namespace SwiftSuds.Order.Api.Tests.Customers;
 public class GetCustomerByIdTests
 {
     private const string BaseUrl = $"/api/v1/customers";
@@ -19,7 +14,7 @@ public class GetCustomerByIdTests
         // act
         using var client = application.CreateClient();
 
-        var response = await client.GetAsync(BaseUrl+"/"+ Guid.NewGuid());
+        var response = await client.GetAsync(BaseUrl + "/" + Guid.NewGuid());
 
         // assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

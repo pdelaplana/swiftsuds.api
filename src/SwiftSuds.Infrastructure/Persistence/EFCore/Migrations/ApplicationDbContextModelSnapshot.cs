@@ -49,6 +49,37 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                     b.ToTable("BusinessEmployees");
                 });
 
+            modelBuilder.Entity("SwiftSuds.Domain.Entities.BusinessOwners.BusinessOwner", b =>
+                {
+                    b.Property<Guid>("BusinessOwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("BusinessOwnerId");
+
+                    b.ToTable("BusinessOwners");
+
+                    b.HasData(
+                        new
+                        {
+                            BusinessOwnerId = new Guid("792b370a-ca62-4ab5-a075-e053117fe8f1"),
+                            Email = "business.owner@mail.com",
+                            Name = "Business Owner",
+                            Phone = "+619019090"
+                        });
+                });
+
             modelBuilder.Entity("SwiftSuds.Domain.Entities.BusinessServices.BusinessService", b =>
                 {
                     b.Property<Guid>("BusinessServiceId")
@@ -58,23 +89,73 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(120)");
+
+                    b.Property<int>("MaxQuantityPerOrder")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(60)");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
 
                     b.HasKey("BusinessServiceId");
 
                     b.HasIndex("BusinessId");
 
                     b.ToTable("BusinessServices");
+
+                    b.HasData(
+                        new
+                        {
+                            BusinessServiceId = new Guid("c58a7a3c-1c43-43a8-b425-dff82c915792"),
+                            BusinessId = new Guid("c7e0c728-a2b7-4dab-85ea-a5835ddd149f"),
+                            MaxQuantityPerOrder = 5,
+                            Name = "Wash (Max 8 Kilos)",
+                            Sequence = 1
+                        },
+                        new
+                        {
+                            BusinessServiceId = new Guid("ef63e303-7fcf-4758-9835-862ef7d98503"),
+                            BusinessId = new Guid("c7e0c728-a2b7-4dab-85ea-a5835ddd149f"),
+                            MaxQuantityPerOrder = 5,
+                            Name = "Dry (Max 8 Kilos)",
+                            Sequence = 2
+                        },
+                        new
+                        {
+                            BusinessServiceId = new Guid("b20a8e3b-6557-49e4-a49b-6a80e7582597"),
+                            BusinessId = new Guid("c7e0c728-a2b7-4dab-85ea-a5835ddd149f"),
+                            MaxQuantityPerOrder = 5,
+                            Name = "Folds (Max 8 Kilos)",
+                            Sequence = 3
+                        },
+                        new
+                        {
+                            BusinessServiceId = new Guid("c2828b67-6107-4fde-8df5-d12eb3de7f32"),
+                            BusinessId = new Guid("c7e0c728-a2b7-4dab-85ea-a5835ddd149f"),
+                            MaxQuantityPerOrder = 1,
+                            Name = "Dry Cleaning",
+                            Sequence = 4
+                        },
+                        new
+                        {
+                            BusinessServiceId = new Guid("340a07c5-7bd5-401a-b34f-59ce9ede4fa0"),
+                            BusinessId = new Guid("c7e0c728-a2b7-4dab-85ea-a5835ddd149f"),
+                            MaxQuantityPerOrder = 1,
+                            Name = "Ironing",
+                            Sequence = 5
+                        });
                 });
 
             modelBuilder.Entity("SwiftSuds.Domain.Entities.Businesses.Business", b =>
                 {
                     b.Property<Guid>("BusinessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BusinessOwnerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -86,7 +167,18 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
 
                     b.HasKey("BusinessId");
 
+                    b.HasIndex("BusinessOwnerId");
+
                     b.ToTable("Businesses");
+
+                    b.HasData(
+                        new
+                        {
+                            BusinessId = new Guid("c7e0c728-a2b7-4dab-85ea-a5835ddd149f"),
+                            BusinessOwnerId = new Guid("792b370a-ca62-4ab5-a075-e053117fe8f1"),
+                            Name = "SwiftSuds Laundry",
+                            ServiceRadius = 10.0
+                        });
                 });
 
             modelBuilder.Entity("SwiftSuds.Domain.Entities.Customers.Customer", b =>
@@ -109,6 +201,15 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                     b.HasKey("CustomerId");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            CustomerId = new Guid("a8307ac9-ecb2-4044-a665-37dc743ed839"),
+                            Email = "seed.customer@mail.com",
+                            Name = "Seed Customer",
+                            Phone = "+619617891787"
+                        });
                 });
 
             modelBuilder.Entity("SwiftSuds.Domain.Entities.Drivers.Driver", b =>
@@ -151,14 +252,14 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                     b.Property<Guid>("BusinessId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BusinessServiceId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DeliveryDriverId")
+                    b.Property<Guid?>("DeliveryDriverId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
@@ -166,23 +267,27 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PickupDriverId")
+                    b.Property<Guid?>("PickupDriverId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("PieceCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("ScheduledDeliveryDateTime")
+                    b.Property<DateTime?>("ScheduledDeliveryDateTimeEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ScheduledPickupDateTime")
+                    b.Property<DateTime?>("ScheduledDeliveryDateTimeStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ScheduledPickupDateTimeEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ScheduledPickupDateTimeStart")
                         .HasColumnType("datetime2");
 
                     b.HasKey("OrderId");
 
                     b.HasIndex("BusinessId");
-
-                    b.HasIndex("BusinessServiceId");
 
                     b.HasIndex("CustomerId");
 
@@ -191,6 +296,29 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                     b.HasIndex("PickupDriverId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("SwiftSuds.Domain.Entities.Orders.OrderService", b =>
+                {
+                    b.Property<Guid>("OrderServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BusinessServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderServiceId");
+
+                    b.HasIndex("BusinessServiceId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderService");
                 });
 
             modelBuilder.Entity("SwiftSuds.Domain.Entities.UserAccounts.UserAccount", b =>
@@ -208,6 +336,20 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                     b.HasKey("UserAccountId");
 
                     b.ToTable("UserAccounts");
+
+                    b.HasData(
+                        new
+                        {
+                            UserAccountId = new Guid("db85f1e2-0ec2-46e7-a3e4-e22caece3566"),
+                            AccountType = 0,
+                            Email = "seed.customer@mail.com"
+                        },
+                        new
+                        {
+                            UserAccountId = new Guid("5cb466e8-938d-444f-a133-134557e18a34"),
+                            AccountType = 2,
+                            Email = "business.owner@mail.com"
+                        });
                 });
 
             modelBuilder.Entity("SwiftSuds.Domain.Entities.BusinessEmployees.BusinessEmployee", b =>
@@ -253,12 +395,54 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                     b.Navigation("Business");
                 });
 
+            modelBuilder.Entity("SwiftSuds.Domain.Entities.BusinessOwners.BusinessOwner", b =>
+                {
+                    b.OwnsOne("SwiftSuds.Domain.ValueObjects.Address", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("BusinessOwnerId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("City")
+                                .HasColumnType("nvarchar(60)");
+
+                            b1.Property<string>("PostCode")
+                                .HasColumnType("nvarchar(10)");
+
+                            b1.Property<string>("StreetAddress1")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(120)");
+
+                            b1.Property<string>("StreetAddress2")
+                                .HasColumnType("nvarchar(120)");
+
+                            b1.Property<string>("StreetAddress3")
+                                .HasColumnType("nvarchar(120)");
+
+                            b1.HasKey("BusinessOwnerId");
+
+                            b1.ToTable("BusinessOwners");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BusinessOwnerId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    BusinessOwnerId = new Guid("792b370a-ca62-4ab5-a075-e053117fe8f1"),
+                                    StreetAddress1 = "1 Main Street"
+                                });
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("SwiftSuds.Domain.Entities.BusinessServices.BusinessService", b =>
                 {
                     b.HasOne("SwiftSuds.Domain.Entities.Businesses.Business", "Business")
                         .WithMany("BusinessServices")
                         .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.OwnsOne("SwiftSuds.Domain.ValueObjects.Money", "Price", b1 =>
@@ -266,12 +450,89 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                             b1.Property<Guid>("BusinessServiceId")
                                 .HasColumnType("uniqueidentifier");
 
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(10,2)");
+
                             b1.HasKey("BusinessServiceId");
 
                             b1.ToTable("BusinessServices");
 
                             b1.WithOwner()
                                 .HasForeignKey("BusinessServiceId");
+
+                            b1.OwnsOne("SwiftSuds.Domain.ValueObjects.Currency", "Currency", b2 =>
+                                {
+                                    b2.Property<Guid>("MoneyBusinessServiceId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<string>("Symbol")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(5)");
+
+                                    b2.HasKey("MoneyBusinessServiceId");
+
+                                    b2.ToTable("BusinessServices");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("MoneyBusinessServiceId");
+
+                                    b2.HasData(
+                                        new
+                                        {
+                                            MoneyBusinessServiceId = new Guid("c58a7a3c-1c43-43a8-b425-dff82c915792"),
+                                            Symbol = "PHP"
+                                        },
+                                        new
+                                        {
+                                            MoneyBusinessServiceId = new Guid("ef63e303-7fcf-4758-9835-862ef7d98503"),
+                                            Symbol = "PHP"
+                                        },
+                                        new
+                                        {
+                                            MoneyBusinessServiceId = new Guid("b20a8e3b-6557-49e4-a49b-6a80e7582597"),
+                                            Symbol = "PHP"
+                                        },
+                                        new
+                                        {
+                                            MoneyBusinessServiceId = new Guid("c2828b67-6107-4fde-8df5-d12eb3de7f32"),
+                                            Symbol = "PHP"
+                                        },
+                                        new
+                                        {
+                                            MoneyBusinessServiceId = new Guid("340a07c5-7bd5-401a-b34f-59ce9ede4fa0"),
+                                            Symbol = "PHP"
+                                        });
+                                });
+
+                            b1.Navigation("Currency")
+                                .IsRequired();
+
+                            b1.HasData(
+                                new
+                                {
+                                    BusinessServiceId = new Guid("c58a7a3c-1c43-43a8-b425-dff82c915792"),
+                                    Amount = 75m
+                                },
+                                new
+                                {
+                                    BusinessServiceId = new Guid("ef63e303-7fcf-4758-9835-862ef7d98503"),
+                                    Amount = 75m
+                                },
+                                new
+                                {
+                                    BusinessServiceId = new Guid("b20a8e3b-6557-49e4-a49b-6a80e7582597"),
+                                    Amount = 50m
+                                },
+                                new
+                                {
+                                    BusinessServiceId = new Guid("c2828b67-6107-4fde-8df5-d12eb3de7f32"),
+                                    Amount = 50m
+                                },
+                                new
+                                {
+                                    BusinessServiceId = new Guid("340a07c5-7bd5-401a-b34f-59ce9ede4fa0"),
+                                    Amount = 50m
+                                });
                         });
 
                     b.Navigation("Business");
@@ -282,6 +543,12 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
 
             modelBuilder.Entity("SwiftSuds.Domain.Entities.Businesses.Business", b =>
                 {
+                    b.HasOne("SwiftSuds.Domain.Entities.BusinessOwners.BusinessOwner", "BusinessOwner")
+                        .WithMany()
+                        .HasForeignKey("BusinessOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsOne("SwiftSuds.Domain.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("BusinessId")
@@ -309,10 +576,19 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("BusinessId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    BusinessId = new Guid("c7e0c728-a2b7-4dab-85ea-a5835ddd149f"),
+                                    StreetAddress1 = "1 Main Street"
+                                });
                         });
 
                     b.Navigation("Address")
                         .IsRequired();
+
+                    b.Navigation("BusinessOwner");
                 });
 
             modelBuilder.Entity("SwiftSuds.Domain.Entities.Customers.Customer", b =>
@@ -344,6 +620,13 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("CustomerId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    CustomerId = new Guid("a8307ac9-ecb2-4044-a665-37dc743ed839"),
+                                    StreetAddress1 = "1 Main Street"
+                                });
                         });
 
                     b.Navigation("Address")
@@ -435,12 +718,6 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SwiftSuds.Domain.Entities.BusinessServices.BusinessService", "BusinessService")
-                        .WithMany("Orders")
-                        .HasForeignKey("BusinessServiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("SwiftSuds.Domain.Entities.Customers.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
@@ -450,19 +727,105 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                     b.HasOne("SwiftSuds.Domain.Entities.Drivers.Driver", "DeliveryDriver")
                         .WithMany("DeliveryOrders")
                         .HasForeignKey("DeliveryDriverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("SwiftSuds.Domain.Entities.Drivers.Driver", "PickupDriver")
                         .WithMany("PickupOrders")
                         .HasForeignKey("PickupDriverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.OwnsOne("SwiftSuds.Domain.ValueObjects.Money", "AmountDue", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
                                 .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+
+                            b1.OwnsOne("SwiftSuds.Domain.ValueObjects.Currency", "Currency", b2 =>
+                                {
+                                    b2.Property<Guid>("MoneyOrderId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<string>("Symbol")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(5)");
+
+                                    b2.HasKey("MoneyOrderId");
+
+                                    b2.ToTable("Orders");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("MoneyOrderId");
+                                });
+
+                            b1.Navigation("Currency")
+                                .IsRequired();
+                        });
+
+                    b.OwnsOne("SwiftSuds.Domain.ValueObjects.Money", "AmountPaid", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+
+                            b1.OwnsOne("SwiftSuds.Domain.ValueObjects.Currency", "Currency", b2 =>
+                                {
+                                    b2.Property<Guid>("MoneyOrderId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<string>("Symbol")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(5)");
+
+                                    b2.HasKey("MoneyOrderId");
+
+                                    b2.ToTable("Orders");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("MoneyOrderId");
+                                });
+
+                            b1.Navigation("Currency")
+                                .IsRequired();
+                        });
+
+                    b.OwnsOne("SwiftSuds.Domain.ValueObjects.Address", "DeliveryAddress", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("City")
+                                .HasColumnType("nvarchar(60)");
+
+                            b1.Property<string>("PostCode")
+                                .HasColumnType("nvarchar(10)");
+
+                            b1.Property<string>("StreetAddress1")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(120)");
+
+                            b1.Property<string>("StreetAddress2")
+                                .HasColumnType("nvarchar(120)");
+
+                            b1.Property<string>("StreetAddress3")
+                                .HasColumnType("nvarchar(120)");
 
                             b1.HasKey("OrderId");
 
@@ -472,23 +835,143 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                                 .HasForeignKey("OrderId");
                         });
 
+                    b.OwnsOne("SwiftSuds.Domain.ValueObjects.Address", "PickupAddress", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("City")
+                                .HasColumnType("nvarchar(60)");
+
+                            b1.Property<string>("PostCode")
+                                .HasColumnType("nvarchar(10)");
+
+                            b1.Property<string>("StreetAddress1")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(120)");
+
+                            b1.Property<string>("StreetAddress2")
+                                .HasColumnType("nvarchar(120)");
+
+                            b1.Property<string>("StreetAddress3")
+                                .HasColumnType("nvarchar(120)");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.OwnsMany("SwiftSuds.Domain.Entities.Orders.OrderItem", "Items", b1 =>
+                        {
+                            b1.Property<Guid>("OrderItemId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Item")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(60)");
+
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Quantity")
+                                .HasColumnType("int");
+
+                            b1.HasKey("OrderItemId");
+
+                            b1.HasIndex("OrderId");
+
+                            b1.ToTable("OrderItem");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
                     b.Navigation("AmountDue")
                         .IsRequired();
 
-                    b.Navigation("Business");
+                    b.Navigation("AmountPaid");
 
-                    b.Navigation("BusinessService");
+                    b.Navigation("Business");
 
                     b.Navigation("Customer");
 
+                    b.Navigation("DeliveryAddress")
+                        .IsRequired();
+
                     b.Navigation("DeliveryDriver");
+
+                    b.Navigation("Items");
+
+                    b.Navigation("PickupAddress")
+                        .IsRequired();
 
                     b.Navigation("PickupDriver");
                 });
 
+            modelBuilder.Entity("SwiftSuds.Domain.Entities.Orders.OrderService", b =>
+                {
+                    b.HasOne("SwiftSuds.Domain.Entities.BusinessServices.BusinessService", "BusinessService")
+                        .WithMany("OrderServices")
+                        .HasForeignKey("BusinessServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SwiftSuds.Domain.Entities.Orders.Order", "Order")
+                        .WithMany("Services")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("SwiftSuds.Domain.ValueObjects.Money", "FinalPrice", b1 =>
+                        {
+                            b1.Property<Guid>("OrderServiceId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.HasKey("OrderServiceId");
+
+                            b1.ToTable("OrderService");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderServiceId");
+
+                            b1.OwnsOne("SwiftSuds.Domain.ValueObjects.Currency", "Currency", b2 =>
+                                {
+                                    b2.Property<Guid>("MoneyOrderServiceId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<string>("Symbol")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(5)");
+
+                                    b2.HasKey("MoneyOrderServiceId");
+
+                                    b2.ToTable("OrderService");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("MoneyOrderServiceId");
+                                });
+
+                            b1.Navigation("Currency")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("BusinessService");
+
+                    b.Navigation("FinalPrice")
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("SwiftSuds.Domain.Entities.BusinessServices.BusinessService", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("OrderServices");
                 });
 
             modelBuilder.Entity("SwiftSuds.Domain.Entities.Businesses.Business", b =>
@@ -510,6 +993,11 @@ namespace SwiftSuds.Infrastructure.Persistence.EfCore.Migrations
                     b.Navigation("DeliveryOrders");
 
                     b.Navigation("PickupOrders");
+                });
+
+            modelBuilder.Entity("SwiftSuds.Domain.Entities.Orders.Order", b =>
+                {
+                    b.Navigation("Services");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SwiftSuds.Domain.Entities.BusinessEmployees;
 using SwiftSuds.Domain.Entities.Businesses;
+using SwiftSuds.Domain.Entities.BusinessOwners;
+using SwiftSuds.Domain.Entities.BusinessServices;
 using SwiftSuds.Domain.Entities.Orders;
 
 namespace SwiftSuds.Infrastructure.Persistence.EFCore.Configurations;
@@ -11,8 +13,13 @@ internal class BusinessEntityTypeConfiguration : IEntityTypeConfiguration<Busine
     {
         builder.HasKey(business => business.BusinessId);
         builder.Property(business => business.BusinessId)
-            .HasConversion(id => id.Value,
+            .HasConversion(
+                id => id.Value,
                 value => new BusinessId(value));
+        builder.Property(order => order.BusinessOwnerId)
+            .HasConversion(
+                id => id.Value,
+                value => new BusinessOwnerId(value));
         builder.OwnsOne(business => business.Address, addressBuilder =>
         {
             addressBuilder.Property(a => a.StreetAddress1);
@@ -30,6 +37,9 @@ internal class BusinessEntityTypeConfiguration : IEntityTypeConfiguration<Busine
             .WithOne(businessEmployee => businessEmployee.Business)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasMany<BusinessService>(business => business.BusinessServices)
+            .WithOne(businessService => businessService.Business)
+            .OnDelete(DeleteBehavior.Restrict);
 
     }
 }

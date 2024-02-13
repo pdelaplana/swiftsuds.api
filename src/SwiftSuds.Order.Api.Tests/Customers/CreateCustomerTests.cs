@@ -4,13 +4,14 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace SwiftSuds.Order.Api.Tests;
+namespace SwiftSuds.Order.Api.Tests.Customers;
 
 public class CreateCustomerTests()
 {
     private const string BaseUrl = "/api/v1/customers";
 
-    private readonly JsonSerializerOptions _serializerOptions = new() {
+    private readonly JsonSerializerOptions _serializerOptions = new()
+    {
         IncludeFields = true
     };
 
@@ -34,13 +35,14 @@ public class CreateCustomerTests()
         // act
         using var client = application.CreateClient();
 
-        var response = await client.PostAsJsonAsync(BaseUrl, 
+        var response = await client.PostAsJsonAsync(BaseUrl,
             new CreateCustomerRequest(
-                Name:"Test Customer", 
-                Email: "customer@email.com", 
+                Name: "Test Customer",
+                Email: "customer@email.com",
                 Phone: "02 9090 9090",
                 Address: new Address() { StreetAddress1 = "101 Main Avenue" }
-                ), _serializerOptions);
+                ), 
+            _serializerOptions);
 
         // assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);

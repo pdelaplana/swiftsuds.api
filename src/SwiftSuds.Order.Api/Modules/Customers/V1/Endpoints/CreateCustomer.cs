@@ -38,7 +38,6 @@ public class CreateCustomer: ApiEndpoint<CreateCustomerRequest, Results<Created<
 
             },
             error => TypedResults.ValidationProblem(((ValidationError)error).ValidationErrors)
-            
         );
     }
 

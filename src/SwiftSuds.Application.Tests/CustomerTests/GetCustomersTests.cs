@@ -2,7 +2,6 @@
 using FluentValidation.Results;
 using Moq;
 using SwiftSuds.Application.Abstractions.Repositories;
-using SwiftSuds.Application.UseCases.Customers.CreateCustomer;
 using SwiftSuds.Application.UseCases.Customers.GetCustomers;
 using SwiftSuds.Domain.Entities.Customers;
 using SwiftSuds.Domain.Errors;

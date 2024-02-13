@@ -7,17 +7,29 @@ namespace SwiftSuds.Domain.Entities.BusinessServices;
 public sealed class BusinessService
 {
     public BusinessService(){}
-    public BusinessService(
+
+    private BusinessService(
         BusinessServiceId businessServiceId,
         BusinessId businessId,
         string name,
         string description,
-        Money price)
+        int maxQuantityPerOrder)
     {
         BusinessServiceId = businessServiceId;
         BusinessId = businessId;
         Name = name;
         Description = description;
+        MaxQuantityPerOrder = maxQuantityPerOrder;
+    }
+
+    public BusinessService(
+        BusinessServiceId businessServiceId,
+        BusinessId businessId,
+        string name,
+        string description,
+        int maxQuantityPerOrder,
+        Money price) : this(businessServiceId, businessId, name, description, maxQuantityPerOrder)
+    {
         Price = price;
     }
 
@@ -29,8 +41,12 @@ public sealed class BusinessService
     public string Name { get; set; } = null!;
 
     [Column(TypeName = "nvarchar(120)")] 
-    public string Description { get; set; } = null!;
+    public string? Description { get; set; } = null!;
     public Money Price { get; set; } = null!;
 
-    public ICollection<Order> Orders { get; set; }
+    public int MaxQuantityPerOrder { get; set; } = 1;
+
+    public int Sequence { get; set; } = 1;
+
+    public ICollection<OrderService> OrderServices { get; set; } = null!;
 }

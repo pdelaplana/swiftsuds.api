@@ -16,12 +16,13 @@ internal sealed class BusinessServiceEntityTypeConfiguration : IEntityTypeConfig
         builder.Property(businessService => businessService.BusinessId)
             .HasConversion(id => id.Value,
                 value => new BusinessId(value));
-        builder.OwnsOne(businessService => businessService.Price);
-
-        builder.HasMany<Order>(businessService => businessService.Orders)
-            .WithOne(order => order.BusinessService)
+        builder.OwnsOne(businessService => businessService.Price, moneyBuilder => 
+        {
+            moneyBuilder.Property(m => m.Amount);
+            moneyBuilder.OwnsOne(m => m.Currency, currencyBuilder => currencyBuilder.Property(c => c.Symbol));
+        });
+        builder.HasMany<OrderService>(businessService => businessService.OrderServices)
+            .WithOne(orderService => orderService.BusinessService)
             .OnDelete(DeleteBehavior.Restrict);
-
-
     }
 }

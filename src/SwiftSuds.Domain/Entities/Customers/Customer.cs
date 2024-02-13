@@ -15,7 +15,7 @@ public sealed class Customer : User
         Phone = phone;
         Address = address;
     }
-    public CustomerId CustomerId { get; private set; } = null!;
+    public CustomerId CustomerId { get; set; } = null!;
    
     public ICollection<Order> Orders { get; set; } = null!;
 }

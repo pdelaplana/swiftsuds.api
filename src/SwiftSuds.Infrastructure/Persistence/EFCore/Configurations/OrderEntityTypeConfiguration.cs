@@ -21,16 +21,47 @@ internal sealed class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Or
         builder.Property(order => order.BusinessId)
             .HasConversion(id => id.Value, 
                 value => new BusinessId(value));
-        builder.Property(order => order.BusinessServiceId)
-            .HasConversion(id => id.Value, 
-                value => new BusinessServiceId(value));
         builder.Property(order => order.DeliveryDriverId)
             .HasConversion(id => id.Value, 
                 value => new DriverId(value));
         builder.Property(order => order.PickupDriverId)
             .HasConversion(id => id.Value, 
                 value => new DriverId(value));
-        builder.OwnsOne(order => order.AmountDue);
+        builder.OwnsOne(order => order.AmountDue, moneyBuilder =>
+        {
+            moneyBuilder.Property(m => m.Amount);
+            moneyBuilder.OwnsOne(m => m.Currency, currencyBuilder => currencyBuilder.Property(c => c.Symbol));
+        });
+        builder.OwnsOne(order => order.AmountPaid, moneyBuilder =>
+        {
+            moneyBuilder.Property(m => m.Amount);
+            moneyBuilder.OwnsOne(m => m.Currency, currencyBuilder => currencyBuilder.Property(c => c.Symbol));
+        });
+        builder.OwnsOne(order => order.PickupAddress, addressBuilder =>
+        {
+            addressBuilder.Property(a => a.StreetAddress1);
+            addressBuilder.Property(a => a.StreetAddress2);
+            addressBuilder.Property(a => a.StreetAddress3);
+            addressBuilder.Property(a => a.City);
+            addressBuilder.Property(a => a.PostCode);
+        });
+        builder.OwnsOne(order => order.DeliveryAddress, addressBuilder =>
+        {
+            addressBuilder.Property(a => a.StreetAddress1);
+            addressBuilder.Property(a => a.StreetAddress2);
+            addressBuilder.Property(a => a.StreetAddress3);
+            addressBuilder.Property(a => a.City);
+            addressBuilder.Property(a => a.PostCode);
+        });
+        builder.OwnsMany<OrderItem>(order => order.Items, a => {
+            a.WithOwner().HasForeignKey("OrderId");
+            a.Property(i => i.OrderItemId).HasConversion(id => id.Value,
+                value => new OrderItemId(value)); ;
+            a.HasKey(i => i.OrderItemId);
+        });
+        builder.HasMany<OrderService>(order => order.Services)
+           .WithOne(orderService => orderService.Order)
+           .OnDelete(DeleteBehavior.Restrict);
 
     }
 }
