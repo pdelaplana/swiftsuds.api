@@ -13,7 +13,7 @@ public class BusinessesModule : ICarterModule
         group.MapGet("/", EndpointHandlerFactory.CreateHandler<GetBusinesses>())
             .WithName("GetBusiness");
 
-        group.MapGet("/{id}", EndpointHandlerFactory.CreateHandler<GetBusinessById>())
+        group.MapGet("/{id:guid}", (EndpointHandlerFactory.CreateHandler<GetBusinessById>())
             .WithName("GetBusinessById");
 
         group.WithTags("Businesses (v1)").WithOpenApi();
