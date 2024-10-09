@@ -1,0 +1,76 @@
+name: Docker CI Pipeline
+
+on:
+  push:
+    branches: [ "develop", "main" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+
+  build:
+    name: Build the application
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_BUILDKIT: 1
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build the Docker image
+        run: |
+          docker build -t myapp:${{ github.sha }} .
+
+      - name: Run application unit tests
+        run: |
+          docker-compose -f docker-compose.yml run --rm application.tests
+
+      - name: Run API unit tests
+        run: |
+          docker-compose -f docker-compose.yml run --rm api.tests
+
+      - name: Publish test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test Results
+          path: ./testresults/**/*.trx
+
+      - name: Publish code coverage
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Code Coverage
+          path: ./testresults/coverage/*cobertura.xml
+
+      - name: Code Coverage Comment (optional)
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: '**/coverage/cobertura-coverage.xml'
+
+  deploy:
+      name: Deploy to Azure App Service
+      runs-on: ubuntu-latest
+      needs: build  # Wait for the build job to complete
+      if: github.ref == 'refs/heads/main'  # Only deploy on 'main' branch (or other production branches)
+
+      env:
+        AZURE_WEBAPP_NAME: ${{ secrets.AZURE_WEBAPP_NAME }}
+        AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      steps:
+      - name: Log in to Azure CLI
+        uses: azure/login@v1
+        with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure App Service using Azure CLI
+        run: |
+          az account set --subscription $AZURE_SUBSCRIPTION_ID
+          az webapp create --resource-group $AZURE_RESOURCE_GROUP --name $AZURE_WEBAPP_NAME --plan "AppServicePlanName" --deployment-container-image-name myapp:${{ github.sha }}
