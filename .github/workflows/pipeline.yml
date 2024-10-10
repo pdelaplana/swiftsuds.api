@@ -40,21 +40,27 @@ jobs:
       - name: Run API unit tests
         run: |
           docker-compose -f docker-compose.yml run --rm api.tests
-
-      - name: Publish test results
+          
+      - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: Test Results
           path: ./testresults/**/*.trx
 
-      - name: Publish code coverage
+      - name: Upload code coverage
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: Code Coverage
           path: ./testresults/coverage/*cobertura.xml
 
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: '**/testresults/**/*.trx'
+          comment_mode: always  # Comment on pull requests
+          
   deploy:
       name: Deploy to Azure App Service
       runs-on: ubuntu-latest
