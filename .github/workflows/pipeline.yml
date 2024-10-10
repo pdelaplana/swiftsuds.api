@@ -29,7 +29,6 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
-
       - name: Build the Docker image
         run: |
           docker-compose -f docker-compose.yml build
@@ -55,11 +54,6 @@ jobs:
         with:
           name: Code Coverage
           path: ./testresults/coverage/*cobertura.xml
-
-      - name: Code Coverage Comment (optional)
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          files: '**/coverage/cobertura-coverage.xml'
 
   deploy:
       name: Deploy to Azure App Service
